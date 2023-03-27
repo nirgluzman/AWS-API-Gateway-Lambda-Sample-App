@@ -16,7 +16,7 @@ const EnterData = () => {
 
   const { isAuthenticated, logoutUser } = UserAuth();
 
-  const handleSubmit = async (e) => {
+  const handleStoreData = async (e) => {
     e.preventDefault();
     setError("");
 
@@ -43,6 +43,24 @@ const EnterData = () => {
     }
   };
 
+  const handleDeleteData = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const { idToken } = await isAuthenticated();
+      const result = await axios.delete(process.env.REACT_APP_API_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: idToken,
+        },
+      });
+      console.log(result);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const handleGetData = async () => {
     setError("");
 
@@ -61,6 +79,13 @@ const EnterData = () => {
           },
         }
       );
+
+      if (result.data.length === 0) {
+        throw new Error(
+          "An error occurred, please try again or submit new data!"
+        );
+      }
+
       setData(result.data);
     } catch (err) {
       setError(err.message);
@@ -84,10 +109,10 @@ const EnterData = () => {
     <div className="max-w-[700px] mx-auto my-16 p-4">
       {error && (
         <div role="alert">
-          <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+          <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
             ERROR
           </div>
-          <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+          <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
             <p>{error}</p>
           </div>
         </div>
@@ -98,7 +123,7 @@ const EnterData = () => {
       </button>
 
       <h1 className="text-2xl font-bold py-2">Set your Data</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleStoreData}>
         <div className="flex flex-col py-2">
           <label className="py-2 font-medium">Age:</label>
           <input
@@ -127,6 +152,13 @@ const EnterData = () => {
           Submit
         </button>
       </form>
+
+      <button
+        onClick={handleDeleteData}
+        className="border w-full px-6 py-2 my-4"
+      >
+        Delete Data
+      </button>
 
       <button onClick={handleGetData} className="border w-full px-6 py-2 my-4">
         I've already stored data on the server!
