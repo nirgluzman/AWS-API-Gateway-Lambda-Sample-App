@@ -12,7 +12,9 @@ const EnterData = () => {
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
 
-  const { isAuthenticated } = UserAuth();
+  const navigate = useNavigate();
+
+  const { isAuthenticated, logoutUser } = UserAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -66,6 +68,18 @@ const EnterData = () => {
     }
   };
 
+  const handleLogout = async () => {
+    setError("");
+    try {
+      await logoutUser();
+      navigate("/");
+      console.log("You are logged out");
+    } catch (err) {
+      setError(err.message);
+      console.log(err.message);
+    }
+  };
+
   return (
     <div className="max-w-[700px] mx-auto my-16 p-4">
       {error && (
@@ -78,6 +92,11 @@ const EnterData = () => {
           </div>
         </div>
       )}
+
+      <button onClick={handleLogout} className="border w-full px-6 py-2 my-4">
+        Logout
+      </button>
+
       <h1 className="text-2xl font-bold py-2">Set your Data</h1>
       <form onSubmit={handleSubmit}>
         <div className="flex flex-col py-2">
