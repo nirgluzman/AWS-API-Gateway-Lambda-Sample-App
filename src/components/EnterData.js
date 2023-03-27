@@ -9,6 +9,7 @@ const EnterData = () => {
   const [age, setAge] = useState(null);
   const [height, setHeight] = useState(null);
   const [income, setIncome] = useState(null);
+  const [data, setData] = useState(null);
   const [error, setError] = useState("");
 
   const { isAuthenticated } = UserAuth();
@@ -18,8 +19,7 @@ const EnterData = () => {
     setError("");
 
     try {
-      const idToken = await isAuthenticated();
-      console.log(idToken);
+      const { idToken } = await isAuthenticated();
 
       const result = await axios.post(
         process.env.REACT_APP_API_URL,
@@ -36,9 +36,33 @@ const EnterData = () => {
         }
       );
       console.log(result);
-      // navigate(`/signup-confirm/${username}`);
     } catch (err) {
       setError(err.message);
+    }
+  };
+
+  const handleGetData = async () => {
+    setError("");
+
+    try {
+      const { idToken, accessToken } = await isAuthenticated();
+
+      const urlParam = "/single";
+      const queryParam = "?accessToken=" + accessToken;
+
+      const result = await axios.get(
+        process.env.REACT_APP_API_URL + urlParam + queryParam,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: idToken,
+          },
+        }
+      );
+      setData(result.data);
+    } catch (err) {
+      setError(err.message);
+      console.log(err.message);
     }
   };
 
@@ -84,6 +108,40 @@ const EnterData = () => {
           Submit
         </button>
       </form>
+
+      <button onClick={handleGetData} className="border w-full px-6 py-2 my-4">
+        I've already stored data on the server!
+      </button>
+
+      {data && (
+        <div className="relative overflow-x-auto">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Category
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Value
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.keys(data[0]).map((key) => (
+                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <th
+                    scope="row"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  >
+                    {key}
+                  </th>
+                  <td className="px-6 py-4">{data[0][key]}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

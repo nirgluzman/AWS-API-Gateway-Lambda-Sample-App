@@ -122,7 +122,9 @@ export const AuthContextProvider = ({ children }) => {
         // Session is valid, user is authenticated
         if (session.isValid()) {
           const idToken = session.getIdToken().getJwtToken();
-          success(idToken);
+          const accessToken = session.getAccessToken().getJwtToken();
+
+          success({ idToken, accessToken });
         } else {
           reject("Session is not valid");
         }
