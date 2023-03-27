@@ -19,6 +19,7 @@ const Signup = () => {
 
     try {
       const result = await createUser(username, email, password);
+      console.log("signup user:", result);
       navigate(`/signup-confirm/${username}`);
     } catch (err) {
       setError(err.message);

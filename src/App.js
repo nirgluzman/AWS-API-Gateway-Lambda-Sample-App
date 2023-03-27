@@ -3,6 +3,8 @@ import { Route, Routes } from "react-router-dom";
 import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import SignupConfirm from "./components/SignupConfirm";
+import ProtectedRoute from "./components/ProtectedRoute";
+import EnterData from "./components/EnterData";
 
 function App() {
   return (
@@ -14,6 +16,14 @@ function App() {
         <Route path="/" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/signup-confirm/:username" element={<SignupConfirm />} />
+        <Route
+          path="/enter-data"
+          element={
+            <ProtectedRoute>
+              <EnterData />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

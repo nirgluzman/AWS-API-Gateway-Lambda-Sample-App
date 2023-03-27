@@ -19,6 +19,7 @@ const SignupConfirm = () => {
 
     try {
       const result = await confirmUser(username, code);
+      console.log("confirming the new created user:", result);
       navigate("/");
     } catch (err) {
       setError(err.message);

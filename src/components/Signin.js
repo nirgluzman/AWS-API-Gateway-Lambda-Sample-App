@@ -18,8 +18,8 @@ const Signin = () => {
 
     try {
       const result = await loginUser(username, password);
-      console.log(result);
-      navigate("/");
+      console.log("signin user:", result);
+      navigate("/enter-data");
     } catch (err) {
       setError(err.message);
       console.log(err.message);
